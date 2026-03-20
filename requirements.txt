@@ -1,0 +1,9 @@
+streamlit
+pydeck
+pandas
+numpy
+requests
+beautifulsoup4
+feedparser
+yfinance
+lxml
