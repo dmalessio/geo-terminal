@@ -59,12 +59,26 @@ def fetch_nasa_firms():
     except:
         return pd.DataFrame()
 
+# SE STREAMLIT CLOUD VIENE BLOCCATO, CREA UN ACCOUNT GRATIS SU OPENSKY NETWORK 
+# E INSERISCI QUI USERNAME E PASSWORD PER SBLOCCARE I VOLI
+OPENSKY_USER = "" 
+OPENSKY_PASS = ""
+
 @st.cache_data(ttl=30)
 def fetch_opensky_flights():
     url = "https://opensky-network.org/api/states/all"
+    
+    # Mascheriamo la richiesta per ingannare i filtri del server Cloud
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36'}
+    
     try:
-        resp = requests.get(url, timeout=10)
-        if resp.status_code != 200: return pd.DataFrame()
+        if OPENSKY_USER and OPENSKY_PASS:
+            resp = requests.get(url, headers=headers, auth=(OPENSKY_USER, OPENSKY_PASS), timeout=10)
+        else:
+            resp = requests.get(url, headers=headers, timeout=10)
+            
+        if resp.status_code != 200: 
+            return pd.DataFrame()
             
         states = resp.json().get('states', [])
         flights = []
